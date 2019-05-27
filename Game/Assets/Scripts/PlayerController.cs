@@ -9,23 +9,46 @@ public class PlayerController : MonoBehaviour
     public LayerMask groundMask;
 
     private bool isOnGround;
+    private float lastSpeed;
     private Rigidbody2D rb2d;
+    private Animator animator;
 
     // Start is called before the first frame update
     private void Start()
     {
         rb2d = GetComponent<Rigidbody2D>();
+        animator = GetComponent<Animator>();
     }
 
     // Update is called once per frame
     private void FixedUpdate()
-    {
+    {   
         CheckJump();
 
         CheckOnGround();
 
         // player movement
+        StartMoving();
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if(collision.tag == Constants.EVENT_TAG)
+        {
+            StopMoving();
+            UIController.instance.ShowComponents();
+        }
+    }
+
+    private void StartMoving()
+    {
         rb2d.velocity = new Vector2(speed, rb2d.velocity.y);
+    }
+
+    private void StopMoving()
+    {
+        lastSpeed = speed;
+        speed = 0;
     }
 
     private void CheckJump()
